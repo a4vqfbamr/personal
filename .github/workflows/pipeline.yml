@@ -13,7 +13,7 @@ jobs:
     # Define matrix of suites to run in parallel
     strategy:
       matrix:
-        suite: [unit test, api smoke, ui smoke]   # 👈 Each suite runs as a separate job
+        suite: [unit,api,ui]   # 👈 Each suite runs as a separate job
       fail-fast: false   # Continue running other suites even if one fails
 
     steps:
