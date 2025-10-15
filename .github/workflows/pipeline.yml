@@ -1,0 +1,42 @@
+name: Selenium Test Suites (Matrix)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  selenium-tests:
+    name: Run Selenium Test Suites
+    runs-on: ubuntu-latest
+
+    # Define matrix of suites to run in parallel
+    strategy:
+      matrix:
+        suite: [unit test, api smoke, ui smoke]   # 👈 Each suite runs as a separate job
+      fail-fast: false   # Continue running other suites even if one fails
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install selenium pytest
+
+      - name: Start Selenium (local or remote)
+        run: |
+          echo "Starting Selenium for suite: ${{ matrix.suite }}"
+          # Example: if using Selenium Grid, you could export GRID_URL here
+          # export SELENIUM_GRID_URL=http://your-grid-endpoint:4444/wd/hub
+
+      - name: Run Selenium ${{ matrix.suite }} Tests
+        run: |
+          echo "Running ${{ matrix.suite }} suite..."
+          pytest tests/${{ matrix.suite }} --maxfail=1 --disable-warnings -q
