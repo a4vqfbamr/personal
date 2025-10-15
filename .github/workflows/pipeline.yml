@@ -6,6 +6,27 @@ on:
   pull_request:
 
 jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt || true
+
+      - name: Run unit tests
+        run: |
+          python3 -m unittest discover -s tests
+
   selenium-tests:
     name: Run Selenium Test Suites
     runs-on: ubuntu-latest
@@ -13,7 +34,7 @@ jobs:
     # Define matrix of suites to run in parallel
     strategy:
       matrix:
-        suite: [unit,api,ui]   # 👈 Each suite runs as a separate job
+        suite: [api,smoke, ui]   # 👈 Each suite runs as a separate job
       fail-fast: false   # Continue running other suites even if one fails
 
     steps:
